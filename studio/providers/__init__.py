@@ -2,5 +2,6 @@
 
 from .base import Provider, ProviderHealth
 from .transcription import FasterWhisperProvider
+from .tts import EdgeTTSProvider
 
-__all__ = ["FasterWhisperProvider", "Provider", "ProviderHealth"]
+__all__ = ["EdgeTTSProvider", "FasterWhisperProvider", "Provider", "ProviderHealth"]
