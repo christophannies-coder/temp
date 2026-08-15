@@ -7,6 +7,7 @@ from studio.platform.capabilities import CapabilitySnapshot, detect_capabilities
 from studio.platform.config import ApplicationConfig, ConfigurationError
 from studio.platform.models import ModelManager
 from studio.providers.transcription import FasterWhisperProvider
+from studio.providers.tts import EdgeTTSProvider
 
 
 class PlatformFoundationTests(unittest.TestCase):
@@ -41,6 +42,11 @@ class PlatformFoundationTests(unittest.TestCase):
     def test_transcription_provider_health_check_has_no_side_effects(self):
         health = FasterWhisperProvider().health_check()
         self.assertEqual(health.name, "faster-whisper")
+        self.assertIsInstance(health.available, bool)
+
+    def test_tts_provider_health_check_has_no_side_effects(self):
+        health = EdgeTTSProvider().health_check()
+        self.assertEqual(health.name, "edge-tts")
         self.assertIsInstance(health.available, bool)
 
     def test_capability_detection_and_model_fallback_are_safe(self):
