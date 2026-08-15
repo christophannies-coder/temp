@@ -3,9 +3,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from studio.platform.capabilities import detect_capabilities
+from studio.platform.capabilities import CapabilitySnapshot, detect_capabilities, resolve_device
 from studio.platform.config import ApplicationConfig, ConfigurationError
 from studio.platform.models import ModelManager
+from studio.providers.transcription import FasterWhisperProvider
 
 
 class PlatformFoundationTests(unittest.TestCase):
@@ -31,6 +32,16 @@ class PlatformFoundationTests(unittest.TestCase):
             restored = ApplicationConfig.load(path)
         self.assertEqual(restored.get_str("future_setting"), "kept")
         self.assertEqual(restored.get_str("device"), "cpu")
+
+    def test_explicit_cuda_falls_back_when_hardware_is_unavailable(self):
+        cpu_only = CapabilitySnapshot("Windows", "3.12", False, False, False)
+        self.assertEqual(resolve_device("cuda", cpu_only), "cpu")
+        self.assertEqual(resolve_device("auto", cpu_only), "cpu")
+
+    def test_transcription_provider_health_check_has_no_side_effects(self):
+        health = FasterWhisperProvider().health_check()
+        self.assertEqual(health.name, "faster-whisper")
+        self.assertIsInstance(health.available, bool)
 
     def test_capability_detection_and_model_fallback_are_safe(self):
         capabilities = detect_capabilities()
