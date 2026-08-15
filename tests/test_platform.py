@@ -23,6 +23,15 @@ class PlatformFoundationTests(unittest.TestCase):
         with self.assertRaises(ConfigurationError):
             config.get_bool("enabled")
 
+    def test_save_round_trip_keeps_unknown_values(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "settings.json"
+            config = ApplicationConfig({"future_setting": "kept", "device": "cpu"}, path)
+            config.save()
+            restored = ApplicationConfig.load(path)
+        self.assertEqual(restored.get_str("future_setting"), "kept")
+        self.assertEqual(restored.get_str("device"), "cpu")
+
     def test_capability_detection_and_model_fallback_are_safe(self):
         capabilities = detect_capabilities()
         self.assertIn(capabilities.recommended_device, {"cpu", "cuda"})
