@@ -32,8 +32,8 @@ Die Tests benötigen weder Modelle, Netzwerk, CUDA noch FFmpeg.
 
 1. Erledigt: Die GUI lädt und speichert nun über `ApplicationConfig`; unbekannte
    Einstellungen bleiben erhalten und fehlerhaftes JSON wird nicht überschrieben.
-2. Den bestehenden Whisper-Code als ersten Adapter hinter den Provider-Vertrag
-   legen; CPU-/CUDA-Entscheidung über `CapabilitySnapshot` zentralisieren.
+2. Erledigt: Whisper läuft hinter `FasterWhisperProvider`; eine angeforderte,
+   aber nicht verfügbare CUDA-GPU fällt sicher auf CPU zurück.
 3. Danach Edge-TTS sowie die Übersetzungs- und Quality-Backends einzeln
    adaptieren, jeweils mit Rückfall- und Fehlermeldungstests.
 4. Vor einem Verkauf Installationspaket, Lizenzprüfung, Datenschutz- und
