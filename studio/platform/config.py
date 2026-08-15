@@ -62,3 +62,20 @@ class ApplicationConfig:
         if minimum is not None and result < minimum:
             raise ConfigurationError(f"'{key}' muss mindestens {minimum} sein.")
         return result
+
+
+    def save(self) -> None:
+        """Write JSON atomically, keeping keys not yet known to the current UI."""
+        if self.source is None:
+            raise ConfigurationError("Für diese Konfiguration wurde kein Speicherort angegeben.")
+        self.source.parent.mkdir(parents=True, exist_ok=True)
+        temporary = self.source.with_suffix(self.source.suffix + ".tmp")
+        try:
+            temporary.write_text(
+                json.dumps(dict(self.values), ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            temporary.replace(self.source)
+        except OSError as exc:
+            temporary.unlink(missing_ok=True)
+            raise ConfigurationError(f"Konfiguration kann nicht gespeichert werden: {self.source}") from exc
