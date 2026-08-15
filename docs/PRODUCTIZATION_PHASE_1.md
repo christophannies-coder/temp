@@ -36,7 +36,10 @@ Die Tests benötigen weder Modelle, Netzwerk, CUDA noch FFmpeg.
    aber nicht verfügbare CUDA-GPU fällt sicher auf CPU zurück.
 3. Erledigt: Edge-TTS läuft hinter `EdgeTTSProvider`; Timing, Stimmenwahl und
    Audiozusammenführung bleiben in der bewährten Engine.
-4. Übersetzungs- und Quality-Backends einzeln adaptieren, jeweils mit Rückfall-
-   und Fehlermeldungstests.
-5. Vor einem Verkauf Installationspaket, Lizenzprüfung, Datenschutz- und
+4. Erledigt: Die Qualitätskorrektur gruppiert anhand der Satzgrenzen im
+   Original. Eine fehlerhaft gesetzte deutsche Roh-Satzgrenze trennt die
+   Korrekturanfrage daher nicht mehr.
+5. Übersetzungs-Backend einzeln adaptieren und die Erstübersetzung für Ollama
+   ebenfalls satzübergreifend ausführen.
+6. Vor einem Verkauf Installationspaket, Lizenzprüfung, Datenschutz- und
    Drittanbieter-/Modell-Lizenzprüfung als separate Produktphase planen.
