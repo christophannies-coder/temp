@@ -27,7 +27,10 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Callable, Iterable, Sequence
 
-from .platform.sentence_groups import build_sentence_aware_groups
+try:
+    from .platform.sentence_groups import build_sentence_aware_groups
+except ImportError:  # Allows direct script execution.
+    from platform.sentence_groups import build_sentence_aware_groups
 
 
 DEFAULT_OLLAMA_URL = "http://127.0.0.1:11434"
