@@ -27,6 +27,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Callable, Iterable, Sequence
 
+from .platform.sentence_groups import build_sentence_aware_groups
+
 
 DEFAULT_OLLAMA_URL = "http://127.0.0.1:11434"
 DEFAULT_MODEL = "qwen3:8b"
@@ -322,57 +324,28 @@ def batch_positions(
     batch_size: int,
     max_chars: int,
 ) -> list[tuple[int, int]]:
+    """Create correction groups from source-language sentence boundaries.
+
+    The raw German translation may already contain false sentence boundaries.
+    It must therefore never decide where a correction request is split.
     """
-    Erstellt zusammenhängende Zielgruppen. Harte Schnitte erfolgen bei langen
-    Pausen oder Sprecher-/Geräuschblöcken. Satzgrenzen werden bevorzugt.
-    """
-    groups: list[tuple[int, int]] = []
-    start = 0
-    n = len(source)
-
-    while start < n:
-        end = start
-        chars = 0
-        best_sentence_end: int | None = None
-
-        while end < n and (end - start) < max(1, batch_size):
-            src_text = split_envelope(source[end].text).content
-            dst_text = split_envelope(translated[end].text).content
-            additional = len(src_text) + len(dst_text) + 80
-
-            if end > start and chars + additional > max_chars:
-                break
-
-            chars += additional
-            end += 1
-
-            visible = dst_text.rstrip()
-            if re.search(r'[.!?…]["»”’)]?$', visible):
-                best_sentence_end = end
-
-            if end < n:
-                gap = source[end].start_ms - source[end - 1].end_ms
-                if gap >= 4500:
-                    break
-                if is_non_speech(source[end - 1].text):
-                    break
-
-        if end == start:
-            end = start + 1
-
-        if (
-            best_sentence_end is not None
-            and best_sentence_end > start
-            and end < n
-            and (end - best_sentence_end) <= 3
-        ):
-            end = best_sentence_end
-
-        groups.append((start, end))
-        start = end
-
-    return groups
-
+    source_texts = [split_envelope(cue.text).content for cue in source]
+    translated_texts = [split_envelope(cue.text).content for cue in translated]
+    gaps_after_ms = [
+        max(0, source[position + 1].start_ms - cue.end_ms)
+        if position + 1 < len(source)
+        else 0
+        for position, cue in enumerate(source)
+    ]
+    non_speech = [is_non_speech(cue.text) for cue in source]
+    return build_sentence_aware_groups(
+        source_texts,
+        translated_texts,
+        gaps_after_ms,
+        non_speech,
+        batch_size=batch_size,
+        max_chars=max_chars,
+    )
 
 class JsonCache:
     def __init__(self, path: Path):
