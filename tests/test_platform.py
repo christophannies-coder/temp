@@ -6,6 +6,7 @@ from pathlib import Path
 from studio.platform.capabilities import CapabilitySnapshot, detect_capabilities, resolve_device
 from studio.platform.config import ApplicationConfig, ConfigurationError
 from studio.platform.models import ModelManager
+from studio.platform.sentence_groups import build_sentence_aware_groups
 from studio.providers.transcription import FasterWhisperProvider
 from studio.providers.tts import EdgeTTSProvider
 
@@ -48,6 +49,28 @@ class PlatformFoundationTests(unittest.TestCase):
         health = EdgeTTSProvider().health_check()
         self.assertEqual(health.name, "edge-tts")
         self.assertIsInstance(health.available, bool)
+
+    def test_sentence_grouping_uses_source_not_broken_translation(self):
+        groups = build_sentence_aware_groups(
+            ["When the door opens", "we leave immediately.", "Next sentence."],
+            ["Wenn die Tür aufgeht.", "gehen wir sofort", "Nächster Satz."],
+            [0, 0, 0],
+            [False, False, False],
+            batch_size=2,
+            max_chars=10_000,
+        )
+        self.assertEqual(groups, [(0, 2), (2, 3)])
+
+    def test_sentence_grouping_keeps_a_long_sentence_together(self):
+        groups = build_sentence_aware_groups(
+            ["First fragment", "second fragment", "finally ends."],
+            ["Erstes Fragment", "zweites Fragment", "endet schließlich."],
+            [0, 0, 0],
+            [False, False, False],
+            batch_size=1,
+            max_chars=1,
+        )
+        self.assertEqual(groups, [(0, 3)])
 
     def test_capability_detection_and_model_fallback_are_safe(self):
         capabilities = detect_capabilities()
