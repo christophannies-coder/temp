@@ -34,7 +34,9 @@ Die Tests benötigen weder Modelle, Netzwerk, CUDA noch FFmpeg.
    Einstellungen bleiben erhalten und fehlerhaftes JSON wird nicht überschrieben.
 2. Erledigt: Whisper läuft hinter `FasterWhisperProvider`; eine angeforderte,
    aber nicht verfügbare CUDA-GPU fällt sicher auf CPU zurück.
-3. Danach Edge-TTS sowie die Übersetzungs- und Quality-Backends einzeln
-   adaptieren, jeweils mit Rückfall- und Fehlermeldungstests.
-4. Vor einem Verkauf Installationspaket, Lizenzprüfung, Datenschutz- und
+3. Erledigt: Edge-TTS läuft hinter `EdgeTTSProvider`; Timing, Stimmenwahl und
+   Audiozusammenführung bleiben in der bewährten Engine.
+4. Übersetzungs- und Quality-Backends einzeln adaptieren, jeweils mit Rückfall-
+   und Fehlermeldungstests.
+5. Vor einem Verkauf Installationspaket, Lizenzprüfung, Datenschutz- und
    Drittanbieter-/Modell-Lizenzprüfung als separate Produktphase planen.
