@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import queue
 import threading
 import traceback
@@ -17,6 +16,7 @@ except Exception:
     ROOT_CLASS = tk.Tk
 
 from .models import PipelineOptions
+from .platform.config import ApplicationConfig, ConfigurationError
 from .mux import MEDIA_EXTENSIONS
 from .pipeline import SUPPORTED_INPUTS, classify, process
 from .utils import CancelledError, open_in_explorer
@@ -848,11 +848,11 @@ class StudioApp:
         options["whisper_language_label"] = self.whisper_language.get()
         options["srt_language_label"] = self.srt_language.get()
         try:
-            self._settings_path().write_text(
-                json.dumps(options, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-        except OSError:
+            current = ApplicationConfig.load(self._settings_path())
+            values = dict(current.values)
+            values.update(options)
+            ApplicationConfig(values, self._settings_path()).save()
+        except ConfigurationError:
             pass
 
     def _load_settings(self) -> None:
@@ -860,8 +860,8 @@ class StudioApp:
         if not path.exists():
             return
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except Exception:
+            data = ApplicationConfig.load(path).values
+        except ConfigurationError:
             return
 
         mapping = {
