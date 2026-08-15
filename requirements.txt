@@ -1,0 +1,7 @@
+faster-whisper
+edge-tts
+deep-translator
+langdetect
+tkinterdnd2
+# Optional, nur für automatische Sprechertrennung:
+pyannote.audio

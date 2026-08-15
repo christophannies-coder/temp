@@ -1,0 +1,23 @@
+TESTBERICHT – FEST INTEGRIERTE KI-SPRACHPRÜFUNG
+================================================
+
+[OK] Alle Python-Dateien syntaktisch kompiliert
+[OK] Qualitätsprüfung fest zwischen Übersetzung und Voiceover integriert
+[OK] Rohübersetzung wird als *_de_roh.srt gesichert
+[OK] Geprüfte Fassung wird als *_de.srt an Voiceover übergeben
+[OK] JSON-Prüfbericht wird im PipelineResult erfasst
+[OK] Satzübergreifende Korrektur mit Original-Kontext
+[OK] Zeitstempel, Blocknummern und Sprecherlabels bleiben erhalten
+[OK] Musik-/Geräuschblöcke bleiben unverändert
+[OK] Ungewöhnlich nummerierte Eingabe-SRT wird vor dem Vergleich normalisiert
+[OK] GUI-Optionen und settings.json-Migration
+[OK] Fehlerverhalten: standardmäßig stoppen oder bewusst Rohfassung verwenden
+[OK] Patch-Installer erstellt Sicherungen und erhält vorhandene Einstellungen
+
+Automatische Tests:
+- TEST_QUALITAETSKORREKTUR.py: bestanden
+- Pipeline-Integration mit Rohdatei, Finaldatei und Prüfbericht: bestanden
+- GUI-/Einstellungsimporte: bestanden
+
+Nicht live getestet:
+- echter Ollama-Aufruf, da im Build-System kein lokaler Ollama-Server läuft
