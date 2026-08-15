@@ -22,7 +22,6 @@ from .translation import (
     translate_cues,
 )
 from .utils import check_cancel
-from .voiceover import build_voiceover
 
 
 AUDIO_EXTENSIONS = {
