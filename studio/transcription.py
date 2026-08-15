@@ -5,18 +5,12 @@ from pathlib import Path
 from typing import Optional
 
 from .models import Cue, LogCallback, PipelineOptions, ProgressCallback
+from .platform.capabilities import resolve_device
 from .utils import check_cancel, extract_audio, probe_duration
 
 
 def _resolve_device(requested: str) -> str:
-    requested = requested.lower()
-    if requested in {"cpu", "cuda"}:
-        return requested
-    try:
-        import torch
-        return "cuda" if torch.cuda.is_available() else "cpu"
-    except Exception:
-        return "cpu"
+    return resolve_device(requested)
 
 
 def _resolve_compute_type(requested: str, device: str) -> str:
@@ -128,6 +122,8 @@ def transcribe_media(
     duration = max(probe_duration(audio_path, cancel_event=cancel_event), 0.1)
 
     device = _resolve_device(options.device)
+    if options.device.lower() == "cuda" and device != "cuda":
+        log("CUDA wurde angefordert, ist aber nicht verfügbar; verwende CPU.")
     compute_type = _resolve_compute_type(options.compute_type, device)
     log(
         f"Lade Whisper-Modell '{options.whisper_model}' "
