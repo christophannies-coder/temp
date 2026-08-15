@@ -14,7 +14,7 @@ from .models import (
 from .mux import MEDIA_EXTENSIONS, find_matching_media, mux_voiceover
 from .quality import review_translation
 from .subtitles import parse_srt, write_srt
-from .transcription import transcribe_media
+from .providers import FasterWhisperProvider
 from .translation import (
     detect_text_language,
     is_german,
@@ -102,7 +102,7 @@ def process(
                 "Aktiviere 'Transkription' oder füge stattdessen eine SRT hinzu."
             )
         log("Stufe 1/5: Transkription")
-        current_cues, detected_language, audio_path = transcribe_media(
+        current_cues, detected_language, audio_path = FasterWhisperProvider().transcribe(
             source,
             work_dir,
             options,
