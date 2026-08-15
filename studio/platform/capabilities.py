@@ -23,6 +23,17 @@ class CapabilitySnapshot:
         return "cuda" if self.cuda_available else "cpu"
 
 
+def resolve_device(requested: str, capabilities: CapabilitySnapshot | None = None) -> str:
+    """Resolve a requested device without allowing an unavailable CUDA target."""
+    requested = requested.strip().lower()
+    snapshot = capabilities or detect_capabilities()
+    if requested == "cpu":
+        return "cpu"
+    if requested == "cuda":
+        return "cuda" if snapshot.cuda_available else "cpu"
+    return snapshot.recommended_device
+
+
 def detect_capabilities() -> CapabilitySnapshot:
     """Return best-effort system information without raising on optional tools."""
     torch_available = importlib.util.find_spec("torch") is not None
