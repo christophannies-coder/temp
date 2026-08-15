@@ -14,7 +14,7 @@ from .models import (
 from .mux import MEDIA_EXTENSIONS, find_matching_media, mux_voiceover
 from .quality import review_translation
 from .subtitles import parse_srt, write_srt
-from .providers import FasterWhisperProvider
+from .providers import EdgeTTSProvider, FasterWhisperProvider
 from .translation import (
     detect_text_language,
     is_german,
@@ -209,7 +209,7 @@ def process(
             raise RuntimeError("Voiceover benötigt eine deutsche SRT.")
         log("Stufe 4/5: Voiceover")
         voiceover = output_dir / f"{source.stem}_voiceover.mp3"
-        voiceover, voices = build_voiceover(
+        voiceover, voices = EdgeTTSProvider().build_voiceover(
             current_cues,
             voiceover,
             work_dir,
