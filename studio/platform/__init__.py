@@ -5,7 +5,7 @@ Fähigkeiten und validieren Konfigurationen, ohne beim Import Modelle zu laden
 oder externe Programme zu starten.
 """
 
-from .capabilities import CapabilitySnapshot, detect_capabilities
+from .capabilities import CapabilitySnapshot, detect_capabilities, resolve_device
 from .config import ApplicationConfig, ConfigurationError
 from .ffmpeg import FFmpegManager, FFmpegStatus
 from .models import ModelManager, ModelSpec
@@ -19,4 +19,5 @@ __all__ = [
     "ModelManager",
     "ModelSpec",
     "detect_capabilities",
+    "resolve_device",
 ]
